@@ -9,23 +9,23 @@ const Product=() => {
         <View style={styles.bor}>
           <Text style={styles.header}>Add new Product Details</Text>
           <Text style={styles.lbl}>Enter Product name</Text>
-          <TextInput name="fullname" placeholder="Full Name"
+          <TextInput name="proname" placeholder="Product Name"
     
           style={styles.txt}
          />
           <Text style={styles.lbl}>Enter Quantity</Text>
-          <TextInput placeholder="Employee ID" name="empid"
+          <TextInput placeholder="In Pcs" name="empid"
     
           style={styles.txt}
          />
         
               <Text style={styles.lbl}>Enter Price</Text>
-          <TextInput placeholder="enter password"  name="pass"
+          <TextInput placeholder="Enter Price"  name="price"
     
           style={styles.txt}
           />
                    <Text style={styles.lbl}>Enter Barcode number</Text>
-          <TextInput name="repass" placeholder="Re-enter password"
+          <TextInput name="barcode" placeholder="Barcode No."
     
           style={styles.txt}
          />
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     txt: {
       
       height: 30,
-      width :"100%",
+      width :300,
       fontSize:18,
        color:"#fff",
         borderColor: 'gray',
