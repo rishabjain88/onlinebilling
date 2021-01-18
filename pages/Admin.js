@@ -1,40 +1,98 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View ,Image, Button,Alert, TextInput} from 'react-native';
+import { StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, TouchableOpacity,Image} from 'react-native';
 import {Component} from 'react';
-const AdminLogin=() =>{
-  
+const Admin=() => {
+    
   return (
-     
-    <View style={styles.container}>
-     <h1 >LOGIN HERE        </h1>
+        <View style={styles.container} >
+        <View style={styles.bor}>
+          
+          <Text style={styles.header}>LOGIN HERE</Text>
+          <Text style={styles.lbl}>Enter UserName</Text>
+          <TextInput name="user" placeholder="UserName"
+    
+          style={styles.txt}
+         />
       
-      <label style={{color:'black',fontSize:24,fontStyle:'normal'}} >Username</label>
     
-
-      <TextInput placeholder="Enter Your Username" style={{fontSize:18,borderWidth:2,margin:10}}
-       ></TextInput>
-    
-      <label style={{color:'black',fontSize:24,fontStyle:'normal'}}>Password</label>
-      <TextInput placeholder="Enter Your Password"style={{fontSize:18,borderWidth:2,margin:10,}} secureTextEntry={true} ></TextInput>
-       <Button  color="black" title="LOGIN" onPress={()=>alert("login sucessful")} style={{margin:10}}></Button>
-      <StatusBar style="auto" />
-   </View>
    
+              <Text style={styles.lbl}>Enter Password</Text>
+          <TextInput placeholder="Enter Password"  name="pass"
+    
+          style={styles.txt}
+          secureTextEntry={true}
+         />
+                  
+    
+             <View style={styles.roww}>
+         <TouchableOpacity style={styles.btn} >
+         
+         <Button title="Login "   / >  
+         
+         </TouchableOpacity>
+    
+         
+        </View>
+        </View>
+        </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+    container: {
+      flex: 1,
+      backgroundColor: '#192531',
+      alignItems: 'center',
+      
+      justifyContent: 'center',
+    },
+    header:{
+      color:"#fff",
+      fontSize:25,
+      marginBottom:10,
+      borderWidth:1,
+      borderRadius:12,
+      borderColor:"#2196F3",
+      padding:2,  
+    },
+    lbl:{
+      color:"#fff",
+      fontSize:18,
+      flexDirection:"row",
+      margin:5
+    },
+    txt: {
+      
+      height: 30,
+      width :"100%",
+      fontSize:18,
+       color:"#fff",
+        borderColor: '#2196F3',
+        flexDirection:"row",
+         borderWidth: 2,
+         textAlign:'left',
+         borderRadius:10,
+         padding:5,
+       
+    },
+    btn: {
+      margin:10,
+     
     
-    borderWidth:2,
-    textAlign:'center',
-    margin:"20%" ,
-    flex: 1,
-    borderRadius: 50,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-export default AdminLogin;
+    },
+    roww:{
+      flex:0,
+       flexDirection:"row"
+      
+      },
+      bor:{
+        borderWidth:1,
+        borderRadius:15,
+        padding:10,
+        borderColor:"#2196F3",
+      }
+      
+  });
+
+export default Admin;
