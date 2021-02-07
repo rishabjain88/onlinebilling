@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React,{useState} from 'react';
 import { StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {Component} from 'react';
 import NewAdmin from './NewAdmin';
@@ -8,15 +8,51 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function Product() {
   const navigation = useNavigation();
+  const [Barcode,setBarcode] = useState("")
+  const [ProductName,setProductName] = useState("")
+  const [Quantity,setQuantity] = useState("")
+  const [ReorderQuantity,setReorderQuantity] = useState("")
+  const [Price,setPrice] = useState("")
+
   const pressHandler=() => {
     navigation.navigate("NewAdmin");
   
   }
-  
+  const AddProduct=()=>{
+    
+    fetch("http://localhost:3000/AddProduct",{
 
+    method:"POST",
+      headers:{
+        // 'Accept':'*/*',
+        // 'Connection':'keep-alive',       
+        //'Cors':'no-cors', 
+        'Content-Type':'application/json'
+      },  
+        body:JSON.stringify({
+        'Barcode': Barcode,  
+        'ProductName':ProductName ,
+        'Quantity': Quantity,
+        'ReorderQuantity':ReorderQuantity ,
+        'Price': Price
+    })
+      
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      console.log(data)
+    })   
+    alert("Product "+ProductName +" is added Successfully!")
+  }
+const clear=()=>{
+  setBarcode("")
+  setProductName("")
+  setQuantity("")
+  setReorderQuantity("")
+  setPrice("")
+}
   const gotostock=() => {
     navigation.navigate("StockDetails");
-  
   }
 
   const goback=() => {
@@ -41,26 +77,27 @@ export default function Product() {
           <Text style={styles.header}>Add new Product Details</Text>
           <Text style={styles.lbl}>Enter Barcode number</Text>
           <TextInput name="barcode" placeholder="Barcode No."
+           value={Barcode} onChangeText={text=>setBarcode(text)}
            style={styles.txt}
          />
           <Text style={styles.lbl}>Enter Product name</Text>
           <TextInput name="proname" placeholder="Product Name"
-    
+     value={ProductName} onChangeText={text=>setProductName(text)}
           style={styles.txt}
          />
           <Text style={styles.lbl}>Enter Quantity</Text>
           <TextInput placeholder="In Pcs" name="qty"
-    
+     value={Quantity} onChangeText={text=>setQuantity(text)}
           style={styles.txt}
          />
         <Text style={styles.lbl}>Enter Reorder Quantity</Text>
           <TextInput placeholder="In Pcs" name="reorder"
-    
+     value={ReorderQuantity} onChangeText={text=>setReorderQuantity(text)}
           style={styles.txt}
          />
               <Text style={styles.lbl}>Enter Price</Text>
           <TextInput placeholder="Enter Price"  name="price"
-    
+     value={Price} onChangeText={text=>setPrice(text)}
           style={styles.txt}
           />
            
@@ -68,12 +105,12 @@ export default function Product() {
              <View style={styles.roww}>
          <TouchableOpacity style={styles.btn}>
          
-         <Button title="Add Product"/>  
+         <Button title="Add Product" onPress={AddProduct}/>  
          
          </TouchableOpacity>
     
          <TouchableOpacity style={styles.btn}>
-         <Button title="Clear"/>  
+         <Button title="Clear" onPress={clear}/>  
          </TouchableOpacity>
          <TouchableOpacity style={styles.btn}>
          <Button title="Register New Employee" onPress={pressHandler}/>  
