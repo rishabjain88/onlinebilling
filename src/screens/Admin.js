@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React,{useState} from 'react';
 import Product from './Product';
 import { SafeAreaView, StyleSheet,TouchableOpacity, Text, View ,Image, Button,Alert, TextInput} from 'react-native';
 import {Component} from 'react';
@@ -8,12 +8,43 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function AdminLogin() {
   const navigation = useNavigation();
+  const [empid,setEmpid] = useState("")
+  const [password,setPass] = useState("")
   const pressHandler=() => {
     navigation.navigate("Product");
   
   }
-  
+  const logincheck=()=>{
 
+    
+    fetch("http://localhost:3000/login",{
+
+      method:"POST",
+      headers:{
+       
+        'Content-Type':'application/json'
+      },  
+        body:JSON.stringify({
+        
+        'Password': password,
+        'EmployeeId': empid,
+       })
+      
+    })
+    .then(res=>res.json())
+    .then((res)=>{
+      
+      if( res.success === true)
+      {
+        // s
+        navigation.navigate("Product",{"Name":res.user,'empid':res.empid,'role':res.role})
+      }
+      else{
+        alert(res.message)
+       
+      }
+    })
+  }
   return (
      
     <View style={styles.container}>
@@ -23,13 +54,13 @@ export default function AdminLogin() {
       <Text style={styles.lbl} >Employee Id</Text>
     
 
-      <TextInput placeholder="Enter Your Username" style={styles.txt}
+      <TextInput placeholder="Enter Your Username" style={styles.txt} value={empid} onChangeText={text=>setEmpid(text)}
        ></TextInput>
     
       <Text style={styles.lbl}>Password</Text>
-      <TextInput placeholder="Enter Your Password"style={styles.txt} secureTextEntry={true} ></TextInput>
+      <TextInput placeholder="Enter Your Password"style={styles.txt} secureTextEntry={true} value={password} onChangeText={text=>setPass(text)}></TextInput>
       <TouchableOpacity style={styles.btn}>
-       <Button title="LOGIN" onPress={pressHandler} style={{margin:10}}></Button>
+       <Button title="LOGIN" onPress={logincheck} style={{margin:10}}></Button>
        </TouchableOpacity>
       <StatusBar style="auto" />
       </View>
