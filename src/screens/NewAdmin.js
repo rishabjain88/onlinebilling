@@ -2,61 +2,49 @@ import { StatusBar } from 'expo-status-bar';
 import React,{useState} from 'react';
 import { StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {Component} from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 import axios from 'axios';
 
 export default function NewAdmin() {
   const [name,setName] = useState("")
   const [empid,setEmpid] = useState("")
   const [password,setPass] = useState("")
+  const [repass,setrePass] = useState("")
   const [role,setRole] = useState("employee")
   
 
- function handleClick(){
-  
-  const newnote={
-    'name':name,  
-    'password':password,
-    'employeeid':empid,
-    'role':role
-  }
-
-   axios.post("http://localhost:3000/create",newnote)
-   alert("name is "+name+ ",password is "+password+" Employee id is "+empid+" role is "+role)
- }
-
+ const route =useRoute();
   const navigation = useNavigation();
   const goback=() => {
     navigation.pop();
   
   }
-  const deleted=()=>{
-    
-    fetch("http://localhost:3000/delete",{
-    method:"post",
-      Header:{
-        // 'Accept':'*/*',
-        // 'Connection':'keep-alive',        
-        'Content-Type':'application/text'
-      },
-       body:{
-        "_id":name
-    }
-    })
-    .then(res=>res.json())
-    alert("deleted!")
+  
+
+  const validate=()=>{
+    var letters = /^[A-Z a-z]+$/;
+  //  if(inputtxt.value.match(letters)
+   if((name.match(letters)) && (!name==""))
+   {
+     if(!empid=="")
+     {
+       if(password==repass && (!password==""))
+       {
+         submitdata()
+       }
+       else{setPass("");setrePass("");alert("Password did'nt matched!")}
+     }else{setempid("");alert("Please enter Employee Id!")}
+   }else{setName("");alert("Please enter a valid Name!")}
   }
 
   const submitdata=()=>{
-    alert("name is "+name+ ",password is "+password+" Employee id is "+empid+" role is "+role)
+    //alert("name is "+name+ ",password is "+password+" Employee id is "+empid+" role is "+role)
     
     fetch("http://localhost:3000/send-data",{
 
-    method:"POST",
+      method:"POST",
       headers:{
-        // 'Accept':'*/*',
-        // 'Connection':'keep-alive',       
-        //'Cors':'no-cors', 
+       
         'Content-Type':'application/json'
       },  
         body:JSON.stringify({
@@ -69,6 +57,10 @@ export default function NewAdmin() {
     })
     .then(res=>res.json())
     .then(data=>{
+      if(data.success==true)
+        alert("Employee "+name+" is already registered!");
+      else
+        alert("Employee "+name+" is registered successfully!");
       console.log(data)
     })    
   }
@@ -76,6 +68,8 @@ export default function NewAdmin() {
   return (
         <View style={styles.container} >
         <View style={styles.bor}>
+
+        
           <Text style={styles.header}>Register a New Employee</Text>
           <Text style={styles.lbl}>Enter Full Name</Text>
           <TextInput name="fullname" placeholder="Full Name"
@@ -96,13 +90,13 @@ export default function NewAdmin() {
          />
                    <Text style={styles.lbl}>Re-Enter Password</Text>
           <TextInput secureTextEntry={true} name="repass" placeholder="Re-enter password"
-    
+    value={repass} onChangeText={text=>setrePass(text)}
           style={styles.txt}
          />
              <View style={styles.roww}>
          <TouchableOpacity style={styles.btn}>
          
-         <Button title="Create New User" onPress={()=>submitdata()}/>  
+         <Button title="Create New User" onPress={()=>validate()}/>  
          
          </TouchableOpacity>
     

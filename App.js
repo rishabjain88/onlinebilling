@@ -5,7 +5,9 @@ import { StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, Touchable
 // import Product from './pages/Product';
 // import Admin from './pages/Admin';
 //import Navigator from './pages/homeStack';
-
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons'
 import Navigator from './src/routes/navigator';
 
 
@@ -17,9 +19,6 @@ render(){
   return (  
     
     <Navigator/>
-    
- 
-    
   );
 }
 }

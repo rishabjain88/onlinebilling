@@ -8,7 +8,7 @@ require('./ProductSchema')
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.json())
-
+let port = process.env.PORT || 3000
 const AdminUser= mongoose.model("admin")
 const AddProduct =mongoose.model("product")
 const mongoUri="mongodb+srv://rishi:12345@cluster0.00f3y.mongodb.net/OnlineBilling";
@@ -35,20 +35,32 @@ app.get('/product',(req,res)=>{
     }).catch(err=>{
         console.log(err)
     })
+})
+app.post('/product',(req,res)=>{
+    AddProduct.find({}).then(data=>{
+        res.send(data)
+    }).catch(err=>{
+        console.log(err)
+    })
     
 })
-
-
 app.post('/send-data',(req,res)=> {
     console.log(req.body)
 
+    AdminUser.findOne({'EmployeeId':req.body.EmployeeId})
+    .then(data=>{
+        console.log(data)
+        if(data){
+            res.send({'success':true})
+        }
+        else
+        {res.send({'success':false})
     const adminuser= new AdminUser({
         Name:req.body.Name,
         Password:req.body.Password,
         EmployeeId:req.body.EmployeeId,
         Role:req.body.Role
-
-    })  
+    })
     adminuser.save()
     .then(data=>{
         console.log(data)
@@ -58,6 +70,32 @@ app.post('/send-data',(req,res)=> {
     })
 
     res.send("posted")
+    }
+})
+})
+
+
+
+app.post('/login',(req,res)=> {
+
+       var Password=req.body.Password;
+       var EmployeeId=req.body.EmployeeId;
+       
+   AdminUser.findOne({$and: [{'EmployeeId':EmployeeId} , {'Password':Password} ] } )
+    .then(data=>{
+        console.log(data)
+        if(data){
+            res.send({'success':true,'user':data.Name,'empid':data.EmployeeId,'role':data.Role})
+        }
+        else
+        {
+            res.send({'success':false ,'message':'Employee not found!'})
+        }
+        
+    }).catch(err=>{
+        console.log(err)
+    })
+
 })
 
 
@@ -80,9 +118,32 @@ app.post('/AddProduct',(req,res)=> {
         console.log(err)
     })
 
-    res.send("posted")
     
 })
+
+
+app.post('/UpdateProduct',(req,res)=> {
+    console.log(req.body)
+    const filter={Barcode:req.body.Barcode};
+const update={
+    Barcode:req.body.Barcode,
+        ProductName:req.body.ProductName,
+        Quantity:req.body.Quantity,
+        ReorderQuantity:req.body.ReorderQuantity,
+        Price:req.body.Price
+};
+    AddProduct.findOneAndUpdate(filter,update)  
+
+    .then(data=>{
+        console.log(data)
+        
+    }).catch(err=>{
+        console.log(err)
+    })
+
+    
+})
+
 
 app.post('/delete',(req,res)=> {
 AdminUser.findByIdAndRemove(req.body.id)
@@ -116,15 +177,6 @@ app.post('/update',(req,res)=> {
     })
     })
     
-app.listen(3000,()=>{
-    console.log("server running")
+app.listen(port,()=>{
+    console.log("server running on "+ port)
 })
-
-
-
-
-
-// "name":"Diffe234234rent",
-// "password":"234324",
-// "employeeid":"emp123",
-// "role":"employee"
