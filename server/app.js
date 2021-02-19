@@ -101,7 +101,14 @@ app.post('/login',(req,res)=> {
 
 app.post('/AddProduct',(req,res)=> {
     console.log(req.body)
-
+    AddProduct.findOne({'Barcode':req.body.Barcode})
+    .then(data=>{
+        console.log(data)
+        if(data){
+            res.send({'success':true})
+        }
+        else
+        {res.send({'success':false})
     const addpro= new AddProduct({
         Barcode:req.body.Barcode,
         ProductName:req.body.ProductName,
@@ -117,6 +124,8 @@ app.post('/AddProduct',(req,res)=> {
     }).catch(err=>{
         console.log(err)
     })
+}
+})
 
     
 })
@@ -132,6 +141,14 @@ const update={
         ReorderQuantity:req.body.ReorderQuantity,
         Price:req.body.Price
 };
+AddProduct.findOne({'Barcode':req.body.Barcode})
+.then(data=>{
+    console.log(data)
+    if(!data){
+        res.send({'success':false})
+    }
+    else
+    {res.send({'success':true})
     AddProduct.findOneAndUpdate(filter,update)  
 
     .then(data=>{
@@ -140,7 +157,8 @@ const update={
     }).catch(err=>{
         console.log(err)
     })
-
+}
+})
     
 })
 
