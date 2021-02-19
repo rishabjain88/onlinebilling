@@ -42,6 +42,29 @@ export default function Product() {
    }else{setProductName("");alert("Please enter a valid Product Name!")}
   }else{setBarcode("");alert("Please enter a valid Barcode!")}
 }
+
+
+const validate2=()=>{
+  var letters = /^[A-Z a-z]+$/;
+if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
+{
+ if((ProductName.match(letters)) && (ProductName!=""))
+ {
+   if((Quantity!="") && (!isNaN(Quantity)))
+   {
+     if(ReorderQuantity!="" && (!isNaN(ReorderQuantity)))
+     {
+       if((Price!="") && (!isNaN(Price)))
+       {
+         UpdateProduct();//this function will be called when all fields are validated.
+       }
+       else {setPrice("");alert("Enter Valid Price!")}
+     }
+     else{setReorderQuantity("");alert("Please enter valid ReorderQuantity!")}
+   }else{setQuantity("");alert("Please enter a Valid Quantity!")}
+ }else{setProductName("");alert("Please enter a valid Product Name!")}
+}else{setBarcode("");alert("Please enter a valid Barcode!")}
+}
   const AddProduct=()=>{
     
     fetch("http://localhost:3000/AddProduct",{
@@ -60,11 +83,14 @@ export default function Product() {
     })
       
     })
-    // .then(res=>res.json())
+    .then(res=>res.json())
     .then(data=>{
-      console.log(data)
+      if(data.success==true)
+      alert("This Product is already Added, You can now only update it.!");
+    else
+      alert("Product "+ProductName+" is Added successfully!");
     })   
-    alert("Product "+ProductName +" is added Successfully!")
+   // alert("Product "+ProductName +" is added Successfully!")
   }
 
 
@@ -88,11 +114,14 @@ export default function Product() {
     })
       
     })
-    // .then(res=>res.json())
+    .then(data=>data.json())
     .then(data=>{
-      console.log(data)
+      if(data.success==false)
+      alert("Product not found!, Add Before Updating!");
+    else
+    alert("Product "+ProductName +" is Updated Successfully!");
     })   
-    alert("Product "+ProductName +" is Updated Successfully!")
+    
   }
 
 const clear=()=>{
@@ -179,7 +208,7 @@ const clear=()=>{
 
 }
          <TouchableOpacity style={styles.btn}>
-         <Button title="Update" onPress={UpdateProduct}/>  
+         <Button title="Update" onPress={validate2}/>  
          </TouchableOpacity>
         </View>
        

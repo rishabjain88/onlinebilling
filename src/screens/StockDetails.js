@@ -8,81 +8,14 @@ import NewAdmin from './NewAdmin';
 import { useNavigation } from '@react-navigation/native';
 import Table from 'react-native-simple-table';
 import renderIf from 'render-if';
+//import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
-
-//   console.log("version number"+Platform.Version)
-//   const navigation = useNavigation();
-//   const pressHandler=() => {
-//     navigation.navigate("Product");
-  
-//   }
-  
-
-// return(
-
-//  <View style={styles.container}>
-//  <View style={styles.border}>
-//  <Text style={styles.header1}>Stock Details</Text>
-//   <View style={styles.bor}>
-//   <Text style={styles.header}>Barcode No.</Text>
-
-//   <Text style={styles.header}>name </Text>
-//   <Text style={styles.header}>Quantity </Text>
-//   <Text style={styles.header}>Price </Text>
-//   <Text style={styles.header}>Reorder qty </Text>
-//   </View>
-//   <View style={styles.bor}>
-//   <Text style={styles.lbl}>9812831982 </Text>
-//   <Text style={styles.lbl}>soap </Text>
-//   <Text style={styles.lbl}>98 </Text>
-//   <Text style={styles.lbl}>10 </Text>
-//   <Text style={styles.lbl}>115 </Text>
-//   </View>
-//   <View style={styles.bor}>
-//   <Text style={styles.lbl}>3234235235 </Text>
-//   <Text style={styles.lbl}>Dettol</Text>
-//   <Text style={styles.lbl}>3500 </Text>
-//   <Text style={styles.lbl}>100 </Text>
-//   <Text style={styles.lbl}>100 </Text>
-//   </View>
-//   </View>
-// {/* ////////Reorder//////////////////////////// */}
-//   <View style={styles.border2}>
-//  <Text style={styles.header1}> Reorder</Text>
-//   <View style={styles.bor}>
-//   <Text style={styles.header}>Barcode No. </Text>
-//   <Text style={styles.header}>name </Text>
-//   <Text style={styles.header}>Quantity </Text>
-//   <Text style={styles.header}>Price </Text>
-//   <Text style={styles.header}>Reorder qty </Text>
-//   </View>
-//   <View style={styles.bor}>
-//   <Text style={styles.lbl}>3234235235 </Text>
-//   <Text style={styles.lbl}>soap </Text>
-  
-//   <Text style={styles.lbl}>98 </Text>
-//   <Text style={styles.lbl}>10 </Text>
-//   <Text style={styles.lbl}>115 </Text>
-//   </View>
-  
-//   </View>
-
-//   </View>
-// );
-
-// }
-
-
-export default function StockDetails(sync) {
 var dataSource=[];
+export default function StockDetails() {
+
+let header=[];
 const [flag, setflag] = useState(false)
 const columns = [
-  
-  {
-    title: 'id',
-    dataIndex: '_id',
-    width: 105
-  },
   {
     title: 'Barcode No.',
     dataIndex: 'Barcode',
@@ -108,11 +41,8 @@ const columns = [
     dataIndex: 'Price',
     width: 140
   },
-    {
-    title: '__v',
-    dataIndex: '__v',
-    width: 140
-  },
+  
+ 
   
 ];
  
@@ -132,18 +62,35 @@ fetch("http://localhost:3000/product",{
   
 })
 .then(res=>res.json())
-.then((res)=>{
-  //dataSource = Object.keys(res).map((key) => [Number(key), res[key]]);
-  dataSource=res
+.then((res)=>{ 
+  
+  // //dataSource = Object.keys(res).map((key) => [Number(key), res[key]]);
+  // res.forEach(obj => {
+   
+  //   Object.entries(obj).forEach(key => header.includes(key) || header.push(key))
+  //   //Object.entries(obj).forEach(header.includes(":") || header.push(":"))
+  //   Object.entries(obj).forEach(value => header.includes(value) || header.push(value))
+  //   let thisRow = new Array(header.length);
+  //   header.forEach((col, i) => thisRow[i] = obj[col] || '')
+  //   dataSource.push(thisRow);
+  // })
+  // res=JSON.stringify(res);
+  // var obj = [res]; 
+          
+              
+     for(var i in res) 
+        dataSource.push({'Barcode':res[i].Barcode,'ProductName':res[i].ProductName,'Quantity':res[i].Quantity,'ReorderQuantity':res[i].ReorderQuantity,'Price':res[i].Price})
+  // dataSource.unshift(header);
    {/* dataSource = dataSource.replace(/"/g, "'"); */}
-  alert("FIRST"+ dataSource)
+  
   setflag(true)
 })
-//dataSource=[{'Barcode':'shubhanshu','ProductName':'shubha1234','Quantity':'sdf','ReorderQuantity':'sdf','Price':100},{'Barcode':'shubhanshu','ProductName':'shubha1234','Quantity':'sdf','ReorderQuantity':'sdf','Price':'100'},{'Barcode':'shubhanshu','ProductName':'shubha1234','Quantity':'sdf','ReorderQuantity':'sdf','Price':'100'}]
+
+
 return (
     <View style={styles.container}>
-      <Text style={styles.header}>Stock Details</Text>{
-      renderIf(flag)(<Table height={320} columnWidth={60} columns={columns} dataSource={dataSource} />)}
+     {
+      renderIf(flag)( <><Text style={styles.header}>Stock Details</Text><Table height={320} columnWidth={60} columns={columns} dataSource={dataSource} /></>)}
     </View>
  );
 }
