@@ -2,7 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import React,{delay,useState} from 'react';
 import { StyleSheet,Button, Platform,Text, View ,TextInput,
    TouchableHighlight, 
-  TouchableOpacity} from 'react-native';
+  TouchableOpacity,
+  ScrollView} from 'react-native';
 import {Component} from 'react';
 import NewAdmin from './NewAdmin';
 import { useNavigation } from '@react-navigation/native';
@@ -11,9 +12,10 @@ import renderIf from 'render-if';
 //import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 var dataSource=[];
+var dataSource2=[];
 export default function StockDetails() {
 
-let header=[];
+const [flag2, setflag2] = useState(false)
 const [flag, setflag] = useState(false)
 const columns = [
   {
@@ -48,7 +50,7 @@ const columns = [
  
 
   
-fetch("http://localhost:3000/product",{
+fetch("http://545eb4ae3fae.ngrok.io/product",{
 
   method:"POST",
   headers:{
@@ -64,33 +66,49 @@ fetch("http://localhost:3000/product",{
 .then(res=>res.json())
 .then((res)=>{ 
   
-  // //dataSource = Object.keys(res).map((key) => [Number(key), res[key]]);
-  // res.forEach(obj => {
-   
-  //   Object.entries(obj).forEach(key => header.includes(key) || header.push(key))
-  //   //Object.entries(obj).forEach(header.includes(":") || header.push(":"))
-  //   Object.entries(obj).forEach(value => header.includes(value) || header.push(value))
-  //   let thisRow = new Array(header.length);
-  //   header.forEach((col, i) => thisRow[i] = obj[col] || '')
-  //   dataSource.push(thisRow);
-  // })
-  // res=JSON.stringify(res);
-  // var obj = [res]; 
-          
-              
+
      for(var i in res) 
         dataSource.push({'Barcode':res[i].Barcode,'ProductName':res[i].ProductName,'Quantity':res[i].Quantity,'ReorderQuantity':res[i].ReorderQuantity,'Price':res[i].Price})
-  // dataSource.unshift(header);
-   {/* dataSource = dataSource.replace(/"/g, "'"); */}
-  
+ 
   setflag(true)
+  dataSource2=[];
 })
+
+fetch("http://545eb4ae3fae.ngrok.io/productReorder",{
+
+  method:"POST",
+  headers:{
+   
+    'Content-Type':'application/json'
+  },  
+    body:JSON.stringify({
+    
+    
+   })
+  
+})
+.then(data=>data.json())
+.then((data)=>{ 
+  // alert(JSON.stringify(data));
+     for(var i in data) 
+     {  if(data[i].Quantity < data[i].ReorderQuantity)
+        dataSource2.push({'Barcode':data[i].Barcode,'ProductName':data[i].ProductName,'Quantity':data[i].Quantity,'ReorderQuantity':data[i].ReorderQuantity,'Price':data[i].Price})
+     }
+  setflag2(true)
+  dataSource=[];
+})
+
 
 
 return (
     <View style={styles.container}>
      {
-      renderIf(flag)( <><Text style={styles.header}>Stock Details</Text><Table height={320} columnWidth={60} columns={columns} dataSource={dataSource} /></>)}
+      renderIf(flag)( <ScrollView horizontal={false}
+          showsHorizontalScrollIndicator={false}><Text style={styles.header}>Stock Details</Text><Table height={320} columnWidth={60} columns={columns} dataSource={dataSource} /></ScrollView>)}
+      {
+      renderIf(flag2)( <ScrollView horizontal={false}
+          showsHorizontalScrollIndicator={false}><Text style={styles.header}>Product's Re-Order Details</Text><Table height={320} columnWidth={60} columns={columns} dataSource={dataSource2} /></ScrollView>)}
+
     </View>
  );
 }
@@ -109,7 +127,7 @@ const styles = StyleSheet.create({
       },
       android: {
         flex:1,
-       flexDirection:'row'
+       flexDirection:'column'
         
       },
       default: {

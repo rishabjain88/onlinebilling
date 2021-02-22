@@ -17,7 +17,7 @@ export default function AdminLogin() {
   const logincheck=()=>{
 
     
-    fetch("http://localhost:3000/login",{
+    fetch("http://545eb4ae3fae.ngrok.io/login",{
 
       method:"POST",
       headers:{
