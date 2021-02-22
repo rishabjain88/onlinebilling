@@ -67,7 +67,7 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
 }
   const AddProduct=()=>{
     
-    fetch("http://localhost:3000/AddProduct",{
+    fetch("http://545eb4ae3fae.ngrok.io/AddProduct",{
 
     method:"POST",
       headers:{
@@ -96,7 +96,7 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
 
   const UpdateProduct=()=>{
     
-    fetch("http://localhost:3000/UpdateProduct",{
+    fetch("http://545eb4ae3fae.ngrok.io/UpdateProduct",{
 
     method:"POST",
       headers:{
@@ -123,6 +123,32 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
     })   
     
   }
+  const search=()=>{
+    fetch("http://545eb4ae3fae.ngrok.io/searchProduct",{
+
+      method:"POST",
+        headers:{
+        
+          'Content-Type':'application/json'
+        },  
+          body:JSON.stringify({
+          'Barcode': Barcode
+      })
+        
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        if(data.success==true)
+       {
+       setProductName(data.pname);
+       setReorderQuantity(JSON.stringify(data.reorder));
+       setQuantity(JSON.stringify(data.quan));
+       setPrice(JSON.stringify(data.price));
+      }
+      else
+      alert("No Product found!");
+      })
+  }
 
 const clear=()=>{
   setBarcode("")
@@ -141,11 +167,11 @@ const clear=()=>{
   }
 
   return (
-        <View style={styles.container} >
+        <View style={styles.container}>
         <View style={styles.roww}>
 
 
-<Text style={styles.head}>Welcome {route.params.Name}</Text>
+<Text style={styles.head}>{route.params.role}: {route.params.Name}</Text>
 <View style={styles.coll}>
 
 <TouchableOpacity style={styles.btnleft}>
@@ -161,10 +187,13 @@ const clear=()=>{
        
           <Text style={styles.header}>Add new Product Details</Text>
           <Text style={styles.lbl}>Enter Barcode number</Text>
+          <View style={styles.serch}>
           <TextInput name="barcode" placeholder="Barcode No."
            value={Barcode} onChangeText={text=>setBarcode(text)}
            style={styles.txt}
          />
+         { renderIf(Barcode.length==12)(<Button title="Search" onPress={search}/>)} 
+         </View>
           <Text style={styles.lbl}>Enter Product name</Text>
           <TextInput name="proname" placeholder="Product Name"
      value={ProductName} onChangeText={text=>setProductName(text)}
@@ -187,7 +216,7 @@ const clear=()=>{
           />
            <View style={styles.btns}>
          
-             <View style={styles.roww}>
+             <View style={styles.roww2}>
          <TouchableOpacity style={styles.btn}>
          
          <Button title="Add Product" onPress={validate}/>  
@@ -198,7 +227,7 @@ const clear=()=>{
          <Button title="Clear" onPress={clear}/>  
          </TouchableOpacity>
          </View>
-         <View style={styles.roww}>
+         <View style={styles.roww2}>
 
 {
          renderIf(route.params.role==='SuperAdmin')(<TouchableOpacity style={styles.btn}>
@@ -228,6 +257,22 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       
       justifyContent: 'center',
+    },
+    serch:{
+      flexDirection:'row',
+      ...Platform.select({
+        ios: {
+          width:340
+        },
+        android: {
+         width:'100%'
+          
+        },
+        default: {
+          // other platforms, web for example
+         width:480
+        }
+      }),
     },
     coll:{
       flexDirection:'column',
@@ -269,13 +314,25 @@ const styles = StyleSheet.create({
     },
     head:{
       color:"#fff",
-      fontSize:20,
-      borderWidth:1,
+      fontSize:16,
+      
+      ...Platform.select({
+        ios: {
+         
+        },
+        android: {
+          color:"#2196F3",
+        },
+        default: {
+         borderWidth:1,
       borderRadius:5,
       borderColor:"#9CDCFE",
+        }
+      }),
       width:'100%',
       paddingTop:8,
-      paddingLeft:5
+      paddingLeft:5,
+      marginBottom:5
     },
    
     txt: {
@@ -286,7 +343,7 @@ const styles = StyleSheet.create({
           width:340
         },
         android: {
-         width:350
+         width:300
           
         },
         default: {
@@ -332,15 +389,52 @@ const styles = StyleSheet.create({
     },
     roww:{
      // alignItem:'center',
-    
-       flexDirection:"row"
+     ...Platform.select({
+      ios: {
+        flexDirection:"column"
+      },
+      android: {
+        flexDirection:"column",
+        alignItems:'flex-end',
+      },
+      default: {
+        flexDirection:"row"
+      }
+    }),
+  },
+    roww2:{
+      // alignItem:'center',
+      ...Platform.select({
+       ios: {
+         flexDirection:"row"
+       },
+       android: {
+         flexDirection:"row"
+       },
+       default: {
+         flexDirection:"row"
+       }
+     })
+       
       },
       bor:{
         borderWidth:1,
         borderRadius:15,
         padding:10,
         borderColor:"#2196F3",
-        justifyContent:'center'
+        justifyContent:'center',
+        
+        ...Platform.select({
+          ios: {
+            alignItems:'center',
+          },
+          android: {
+            alignItems:'center',
+          },
+          default: {
+           
+          }
+        })
       }
       
   });

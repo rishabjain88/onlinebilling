@@ -40,7 +40,7 @@ export default function NewAdmin() {
   const submitdata=()=>{
     //alert("name is "+name+ ",password is "+password+" Employee id is "+empid+" role is "+role)
     
-    fetch("http://localhost:3000/send-data",{
+    fetch("http://545eb4ae3fae.ngrok.io/send-data",{
 
       method:"POST",
       headers:{

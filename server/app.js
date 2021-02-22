@@ -44,6 +44,18 @@ app.post('/product',(req,res)=>{
     })
     
 })
+
+app.post('/productReorder',(req,res)=>{
+   AddProduct.find( { where: ()=>{ 'Quantity' < 'ReorderQuantity' } } )
+    // AddProduct.where('ReorderQuantity').gt()
+    .then(data1=>{
+        res.send(data1)
+    }).catch(err=>{
+        console.log(err)
+    })
+    
+})
+
 app.post('/send-data',(req,res)=> {
     console.log(req.body)
 
@@ -74,6 +86,28 @@ app.post('/send-data',(req,res)=> {
 })
 })
 
+
+app.post('/searchProduct',(req,res)=> {
+
+    
+    var Barcode=req.body.Barcode;
+    
+AddProduct.findOne({'Barcode':Barcode} )
+ .then(data=>{
+     console.log(data)
+     if(data){
+         res.send({'success':true,'pname':data.ProductName,'quan':data.Quantity,'price':data.Price,'reorder':data.ReorderQuantity})
+     }
+     else
+     {
+         res.send({'success':false ,'message':'Employee not found!'})
+     }
+     
+ }).catch(err=>{
+     console.log(err)
+ })
+
+})
 
 
 app.post('/login',(req,res)=> {
