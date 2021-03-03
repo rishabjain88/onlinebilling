@@ -1,12 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState} from 'react';
-import { StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
+import { StyleSheet,Button,Image, Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {Component} from 'react';
+import renderIf from 'render-if';
 import { useNavigation,useRoute } from '@react-navigation/native';
-import axios from 'axios';
+import { AntDesign,MaterialIcons,MaterialCommunityIcons,FontAwesome  ,Ionicons ,Feather } from '@expo/vector-icons'; 
 
 export default function NewAdmin() {
   const [name,setName] = useState("")
+  const [toggle,setToggle] = useState(false)
   const [empid,setEmpid] = useState("")
   const [password,setPass] = useState("")
   const [repass,setrePass] = useState("")
@@ -38,9 +40,9 @@ export default function NewAdmin() {
   }
 
   const submitdata=()=>{
+    setToggle(true)
     //alert("name is "+name+ ",password is "+password+" Employee id is "+empid+" role is "+role)
-    
-    fetch("http://545eb4ae3fae.ngrok.io/send-data",{
+    fetch("http://4edd4fc23958.ngrok.io/send-data",{
 
       method:"POST",
       headers:{
@@ -62,6 +64,7 @@ export default function NewAdmin() {
       else
         alert("Employee "+name+" is registered successfully!");
       console.log(data)
+      setToggle(false)
     })    
   }
 
@@ -94,14 +97,19 @@ export default function NewAdmin() {
           style={styles.txt}
          />
              <View style={styles.roww}>
-         <TouchableOpacity style={styles.btn}>
+         <TouchableOpacity style={styles.btn}  onPress={()=>validate()}>
+         <MaterialIcons name="add-moderator" size={24} color="#192531" />
          
-         <Button title="Create New User" onPress={()=>validate()}/>  
+         {renderIf(!toggle)(
+          <Text style={styles.btntxt}>Create New User</Text>)}
+      {renderIf(toggle)(
+      <Image style={{height:25, width:25}} source={require('../../assets/loading.gif')}/>)}
          
          </TouchableOpacity>
     
-         <TouchableOpacity style={styles.btn}>
-         <Button title="Cancel" onPress={goback}/>  
+         <TouchableOpacity style={styles.btn}  onPress={goback}>
+         <MaterialIcons name="cancel" size={24} color="#192531" />
+         <Text style={styles.btntxt}>Cancel</Text>
          </TouchableOpacity>
         </View>
         </View>
@@ -148,8 +156,20 @@ const styles = StyleSheet.create({
          marginBottom:5,
        
     },
+    btntxt:{
+    color:"#192531",
+    marginLeft:4
+    },
     btn: {
       margin:5,
+      height:30,
+      borderRadius:50,
+      backfaceVisibility:'visible',
+      flexDirection:'row',
+      backgroundColor:'#2196F3',
+      paddingHorizontal:10,
+      alignItems:'center',
+      justifyContent:'center',
     },
     roww:{
      
@@ -161,6 +181,8 @@ const styles = StyleSheet.create({
         padding:10,
         borderColor:"#2196F3",
         marginBottom:10,
+  
+
         
       }
       

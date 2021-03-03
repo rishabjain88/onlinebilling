@@ -1,18 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
-import React,{useState} from 'react';
-import { Platform,StyleSheet,Button, Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
+import React,{useState,useEffect} from 'react';
+import { Platform,StyleSheet,Button, Image,Text, View ,TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {Component} from 'react';
 import NewAdmin from './NewAdmin';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCoffee } from '@fortawesome/free-solid-svg-icons';
-import { useNavigation,useRoute } from '@react-navigation/native';
+import { useNavigation,useRoute,useFocusEffect  } from '@react-navigation/native';
 import renderIf from 'render-if';
+// import ImagePicker from 'react-native-image-picker';
+// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { AntDesign,MaterialIcons,MaterialCommunityIcons,FontAwesome  ,Ionicons ,Feather } from '@expo/vector-icons'; 
 
 export default function Product() {
   const navigation = useNavigation();
-  const [flag,setFlag]=useState(false);
+  var c=0;
+  const [flag1,setFlag1]=useState(false);
+  const [toggle,setToggle]=useState(false);
+  const [toggle2,setToggle2]=useState(false);
    const route= useRoute()
   const pressHandler=() => {
+    
     navigation.navigate("NewAdmin");
   }
   const [Barcode,setBarcode] = useState("")
@@ -23,7 +30,7 @@ export default function Product() {
  
   const validate=()=>{
     var letters = /^[A-Z a-z]+$/;
-  if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
+  if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length>11))
   {
    if((ProductName.match(letters)) && (ProductName!=""))
    {
@@ -42,11 +49,41 @@ export default function Product() {
    }else{setProductName("");alert("Please enter a valid Product Name!")}
   }else{setBarcode("");alert("Please enter a valid Barcode!")}
 }
+// const onScreenLoad = () => {
+//   if(route.params.barfromstock!=null)
+//   {
+//   setBarcode(route.params.barfromstock);
+//   gotosearch;
+//   }
+// // }
+// useEffect(() => {
 
+//   onScreenLoad();
 
+// }, [])
+ 
+const gotosearch=()=>{
+  search();
+}
+useFocusEffect(
+  React.useCallback(() => {
+    if(route.params.barfromstock!=null)
+    {
+      
+      if(!flag1){
+   
+      }
+      else
+      {
+        setBarcode(route.params.barfromstock);
+      }
+  setFlag1(true);
+    }
+  })
+)
 const validate2=()=>{
   var letters = /^[A-Z a-z]+$/;
-if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
+if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length>11))
 {
  if((ProductName.match(letters)) && (ProductName!=""))
  {
@@ -66,8 +103,9 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
 }else{setBarcode("");alert("Please enter a valid Barcode!")}
 }
   const AddProduct=()=>{
-    
-    fetch("http://545eb4ae3fae.ngrok.io/AddProduct",{
+    setToggle2(true);
+
+    fetch("http://4edd4fc23958.ngrok.io/AddProduct",{
 
     method:"POST",
       headers:{
@@ -89,20 +127,19 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
       alert("This Product is already Added, You can now only update it.!");
     else
       alert("Product "+ProductName+" is Added successfully!");
+      setToggle2(false);
     })   
    // alert("Product "+ProductName +" is added Successfully!")
   }
 
 
   const UpdateProduct=()=>{
-    
-    fetch("http://545eb4ae3fae.ngrok.io/UpdateProduct",{
+    setToggle(true);
+    fetch("http://4edd4fc23958.ngrok.io/UpdateProduct",{
 
     method:"POST",
       headers:{
-        // 'Accept':'*/*',
-        // 'Connection':'keep-alive',       
-        //'Cors':'no-cors', 
+      
         'Content-Type':'application/json'
       },  
         body:JSON.stringify({
@@ -120,15 +157,16 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
       alert("Product not found!, Add Before Updating!");
     else
     alert("Product "+ProductName +" is Updated Successfully!");
+
+    setToggle(false);
     })   
     
   }
   const search=()=>{
-    fetch("http://545eb4ae3fae.ngrok.io/searchProduct",{
+    fetch("http://4edd4fc23958.ngrok.io/searchProduct",{
 
       method:"POST",
         headers:{
-        
           'Content-Type':'application/json'
         },  
           body:JSON.stringify({
@@ -150,6 +188,38 @@ if((!isNaN(Barcode)) && (Barcode!="") && (Barcode.length==12))
       })
   }
 
+  const searchfromstock=()=>{
+    fetch("http://4edd4fc23958.ngrok.io/searchProduct",{
+
+      method:"POST",
+        headers:{
+          'Content-Type':'application/json'
+        },  
+          body:JSON.stringify({
+          'Barcode': Barcode
+      })
+        
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        if(data.success==true)
+       {
+       setProductName(data.pname);
+       setReorderQuantity(JSON.stringify(data.reorder));
+       setQuantity(JSON.stringify(data.quan));
+       setPrice(JSON.stringify(data.price));
+      }
+    
+      })
+  }
+// const imgupload=()=>{
+//   const options= {
+//     noData: true,
+//   };
+// launchImageLibrary(options, response =>{
+//   console.log("response",response);
+// });
+// };
 const clear=()=>{
   setBarcode("")
   setProductName("")
@@ -158,6 +228,7 @@ const clear=()=>{
   setPrice("")
 }
   const gotostock=() => {
+  //  navigation.goBack();
     navigation.navigate("StockDetails");
   }
 
@@ -169,47 +240,64 @@ const clear=()=>{
   return (
         <View style={styles.container}>
         <View style={styles.roww}>
+       
+        {/* <Ionicons style={styles.ico1}name="person-circle-outline" size={20} color="#2196F3" /> */}
+<Text style={styles.head}> {route.params.role}: {route.params.Name}</Text>
 
-
-<Text style={styles.head}>{route.params.role}: {route.params.Name}</Text>
 <View style={styles.coll}>
 
-<TouchableOpacity style={styles.btnleft}>
-         <Button title="Logout" onPress={goback}>
-         </Button>  
+<TouchableOpacity style={styles.btnleft} onPress={()=>goback()} >
+<AntDesign style={{marginVertical:5}} name="logout" size={24} color="#192531" /> 
+<Text >Logout</Text>  
          </TouchableOpacity>
-         <TouchableOpacity style={styles.btnleft}>
-         <Button title="Stock Details" onPress={gotostock}/>  
+         <TouchableOpacity style={styles.btnleft} onPress={gotostock}>
+         <MaterialIcons style={{marginVertical:5}} name="storage" size={20} color="#192531" /> 
+         <Text>Stock Details</Text>  
          </TouchableOpacity>
          </View>
 </View>
         <View style={styles.bor}>
        
           <Text style={styles.header}>Add new Product Details</Text>
-          <Text style={styles.lbl}>Enter Barcode number</Text>
+          <View style={styles.roww2}>
+          <AntDesign name="barcode" size={24} color="#fff" />
+          <Text style={styles.lbl}> Enter Barcode number</Text></View>
           <View style={styles.serch}>
+          
           <TextInput name="barcode" placeholder="Barcode No."
            value={Barcode} onChangeText={text=>setBarcode(text)}
            style={styles.txt}
          />
-         { renderIf(Barcode.length==12)(<Button title="Search" onPress={search}/>)} 
+         { renderIf(Barcode.length>11)(<Button title="Search" onPress={search}/>)} 
          </View>
-          <Text style={styles.lbl}>Enter Product name</Text>
+         <View style={styles.roww2}>
+         <Feather name="package" size={24} color="#fff" />
+          <Text style={styles.lbl}> Enter Product name</Text>
+          </View>
           <TextInput name="proname" placeholder="Product Name"
      value={ProductName} onChangeText={text=>setProductName(text)}
           style={styles.txt}
          />
-          <Text style={styles.lbl}>Enter Quantity</Text>
+         <View style={styles.roww2}>
+         <Ionicons name="ios-add-circle-outline" size={24} color="#fff" />
+          <Text style={styles.lbl}> Enter Quantity</Text>
+          </View>
           <TextInput placeholder="In Pcs" name="qty"
      value={Quantity} onChangeText={text=>setQuantity(text)}
           style={styles.txt}
-         />
-        <Text style={styles.lbl}>Enter Reorder Quantity</Text>
+         /><View style={styles.roww2}>
+         <MaterialCommunityIcons name="less-than-or-equal" size={24} color="#fff" />
+         
+        <Text style={styles.lbl}> Enter Reorder Quantity</Text></View>
           <TextInput placeholder="In Pcs" name="reorder"
      value={ReorderQuantity} onChangeText={text=>setReorderQuantity(text)}
           style={styles.txt}
          />
-              <Text style={styles.lbl}>Enter Price</Text>
+
+<View style={styles.roww2}>
+<FontAwesome name="rupee" style={{marginLeft:5}} size={24} color="#fff" />
+              <Text style={styles.lbl}> Enter Price</Text>
+              </View>
           <TextInput placeholder="Enter Price"  name="price"
      value={Price} onChangeText={text=>setPrice(text)}
           style={styles.txt}
@@ -217,27 +305,36 @@ const clear=()=>{
            <View style={styles.btns}>
          
              <View style={styles.roww2}>
-         <TouchableOpacity style={styles.btn}>
-         
-         <Button title="Add Product" onPress={validate}/>  
+         <TouchableOpacity style={styles.btn} onPress={validate}>
+         <MaterialIcons name="add-box" size={24} color="#192531" />
+         {renderIf(!toggle2)(
+          
+      <Text style={styles.label}>Add Product</Text>)}
+      {renderIf(toggle2)(
+      <Image style={{height:25, width:25}} source={require('../../assets/loading.gif')}/>)}
          
          </TouchableOpacity>
     
-         <TouchableOpacity style={styles.btn}>
-         <Button title="Clear" onPress={clear}/>  
+         <TouchableOpacity style={styles.btn}onPress={clear}>
+         <Feather name="delete" size={24} color="#192531" />
+         <Text style={styles.label}>Clear all</Text> 
          </TouchableOpacity>
          </View>
          <View style={styles.roww2}>
 
 {
-         renderIf(route.params.role==='SuperAdmin')(<TouchableOpacity style={styles.btn}>
-
-         <Button title="Add Employee" onPress={pressHandler}/>  
+         renderIf(route.params.role==='SuperAdmin')(<TouchableOpacity style={styles.btn}  onPress={pressHandler}>
+          <MaterialIcons name="admin-panel-settings" size={24} color="#192531" />
+          <Text style={styles.label}>Add Employee</Text>
          </TouchableOpacity>)
 
 }
-         <TouchableOpacity style={styles.btn}>
-         <Button title="Update" onPress={validate2}/>  
+         <TouchableOpacity style={styles.btn}onPress={validate2}>
+         <MaterialIcons name="update" size={24} color="#192531" />
+         {renderIf(!toggle)(
+      <Text style={styles.label}>Update</Text>)}
+      {renderIf(toggle)(
+      <Image style={{height:25, width:25}} source={require('../../assets/loading.gif')}/>)}
          </TouchableOpacity>
         </View>
        
@@ -246,6 +343,7 @@ const clear=()=>{
 </View>
 
         </View>
+      
         </View>
   );
 }
@@ -258,19 +356,24 @@ const styles = StyleSheet.create({
       
       justifyContent: 'center',
     },
+    label:{
+      marginLeft:10
+    },
     serch:{
-      flexDirection:'row',
+      
       ...Platform.select({
         ios: {
-          width:340
+          width:340,
+          flexDirection:'column',
         },
         android: {
-         width:'100%'
-          
+         width:'100%',
+          flexDirection:'column',
         },
         default: {
           // other platforms, web for example
-         width:480
+         width:480,
+         flexDirection:'row',
         }
       }),
     },
@@ -278,7 +381,7 @@ const styles = StyleSheet.create({
       flexDirection:'column',
     },
     header:{
-      color:"#fff",
+    
       fontSize:25,
       marginBottom:20,
       borderWidth:1,
@@ -286,21 +389,32 @@ const styles = StyleSheet.create({
       borderColor:"#9CDCFE",
       padding:2,  
       textAlign:'center',
+      color:"#fff"
     },
     lbl:{
-      color:"#fff",
+     
       fontSize:18,
       flexDirection:"row",
+      color:"#fff"
       
     },btnleft:{
+      flexDirection:'row',
+      backgroundColor:'#2196F3',
+      backfaceVisibility:'visible',
+      justifyContent:'center',
+      alignItems:'center',
+      borderRadius:10,
+      height:30,
       ...Platform.select({
         ios: {
-          backgroundColor: 'red'
+          marginLeft:262,
+          marginBottom:5,
+          width:140,
         },
         android: {
           marginLeft:262,
           marginBottom:5,
-          width:120,
+          width:130,
           
         },
         default: {
@@ -308,14 +422,20 @@ const styles = StyleSheet.create({
          marginLeft:950,
          marginBottom:5,
          marginRight:5,
-         width:120
+         width:150
         }
       })
+    },
+    ico1:{
+paddingTop:8,
+paddingLeft:8,
     },
     head:{
       color:"#fff",
       fontSize:16,
-      
+      flexDirection:'row',
+      alignItems:'center',
+      justifyContent:'center',
       ...Platform.select({
         ios: {
          
@@ -324,9 +444,7 @@ const styles = StyleSheet.create({
           color:"#2196F3",
         },
         default: {
-         borderWidth:1,
-      borderRadius:5,
-      borderColor:"#9CDCFE",
+       
         }
       }),
       width:'100%',
@@ -340,15 +458,15 @@ const styles = StyleSheet.create({
       height: 30,
       ...Platform.select({
         ios: {
-          width:340
+          width:"100%"
         },
         android: {
-         width:300
-          
+         width:360
+
         },
         default: {
           // other platforms, web for example
-         width:480
+         width:"100%"
         }
       }),
       fontSize:18,
@@ -363,6 +481,13 @@ const styles = StyleSheet.create({
        
     },
     btn: {
+      backfaceVisibility:'visible',
+      backgroundColor:'#2196F3',
+      borderRadius:10,
+      alignItems:'center',
+      justifyContent:'center',
+       height:30,
+       flexDirection:'row',
       ...Platform.select({
         ios: {
           margin:5,
@@ -379,7 +504,7 @@ const styles = StyleSheet.create({
         default: {
          width:225,
          margin:5
-         
+        
         }
       }),
       
@@ -396,9 +521,13 @@ const styles = StyleSheet.create({
       android: {
         flexDirection:"column",
         alignItems:'flex-end',
+        justifyContent:'center',
+        paddingRight:22
+
       },
       default: {
-        flexDirection:"row"
+        flexDirection:"row",
+        
       }
     }),
   },
@@ -426,13 +555,13 @@ const styles = StyleSheet.create({
         
         ...Platform.select({
           ios: {
-            alignItems:'center',
+            alignItems:'stretch',
           },
           android: {
-            alignItems:'center',
+            alignItems:'stretch',
           },
           default: {
-           
+           alignItems:'stretch'
           }
         })
       }

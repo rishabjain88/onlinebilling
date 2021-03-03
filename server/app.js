@@ -46,8 +46,7 @@ app.post('/product',(req,res)=>{
 })
 
 app.post('/productReorder',(req,res)=>{
-   AddProduct.find( { where: ()=>{ 'Quantity' < 'ReorderQuantity' } } )
-    // AddProduct.where('ReorderQuantity').gt()
+   AddProduct.find({})
     .then(data1=>{
         res.send(data1)
     }).catch(err=>{
@@ -164,7 +163,28 @@ app.post('/AddProduct',(req,res)=> {
     
 })
 
+app.post('/search',(req,res)=>{
+    console.log(req.body)
+    //const ProductName=req.body.ProductName;
+AddProduct.find({'ProductName':{$regex:req.body.ProductName,$options:"i"},})
+   .then(data=>{
+    if(data){
+        res.send(data);
 
+        
+    //res.end();
+    }
+    else{
+                
+       res.send({'message':'s'})
+    
+    }
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+
+})
 app.post('/UpdateProduct',(req,res)=> {
     console.log(req.body)
     const filter={Barcode:req.body.Barcode};
@@ -198,7 +218,7 @@ AddProduct.findOne({'Barcode':req.body.Barcode})
 
 
 app.post('/delete',(req,res)=> {
-AdminUser.findByIdAndRemove(req.body.id)
+AddProduct.findOneAndDelete({'Barcode':req.body.Barcode})
 .then(data=>{
 
     console.log(data)
