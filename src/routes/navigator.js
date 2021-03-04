@@ -6,8 +6,6 @@ import  NewAdmin from '../screens/NewAdmin'
 import  Product from '../screens/Product'
 import  StockDetails from '../screens/StockDetails'
 
-
-
 const AppStack = createStackNavigator();
 export default function Navigator(){
 
@@ -19,7 +17,6 @@ export default function Navigator(){
     <AppStack.Screen name="StockDetails" component={StockDetails} />
     <AppStack.Screen name="Product" component={Product} />
     </AppStack.Navigator>
-
     </NavigationContainer>
     );
 }
